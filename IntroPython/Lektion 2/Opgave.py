@@ -85,3 +85,8 @@ print(sorted(drømmeSteder,reverse=True))
 print(drømmeSteder)
 drømmeSteder.reverse()
 print(drømmeSteder)
+
+navne2 = ["Steffen", "Lukas"]
+print(navne2)
+navne2.reverse()
+print(navne2)
