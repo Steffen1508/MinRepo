@@ -9,7 +9,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import accuracy_score
 
-df = pd.read_csv('C:\\Users\\Raind\\Documents\\MinRepo\\IntroAi\\iris.csv')
+df = pd.read_csv('C:\\Users\\Raind\\Documents\\MinRepo\\IntroAi\\Lektion 2\\iris.csv')
+df = df.sample(frac=1, random_state=42).reset_index(drop=True)
 
 df.info()
 
@@ -17,29 +18,39 @@ df.describe()
 
 df.dropna(inplace=True)
 
-X=df[["sepal_length", "sepal_width"]]
+#X=df[["sepal_length", "sepal_width"]]
 y=df.target
+X = df.iloc[:, 0:3].values
 
 #Split the dataset into traning and testing set
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=69)
+X_train_small, y_train_small = X_train[:50], y_train[:50]
+
 
 #Create a kNN classifier with a specified calue of k (e.g., k=3)
-k = 17
+k = 25
 knn_classifier = KNeighborsClassifier(n_neighbors=k)
 
 #Fit the classifier to the traning data
-knn_classifier.fit(X_train, y_train)
+knn_classifier.fit(X_train_small, y_train_small)
 
 # Make predictions on the test set
 y_pred = knn_classifier.predict(X_test)
 
+
+
 #Calculate the accuracy of the model
 accuracy = accuracy_score(y_test, y_pred)
+print(f"Train accuracy: {knn_classifier.score(X_train, y_train) * 100:.2f}%")
 print(f"Accuracy of kNN with k={k}: {accuracy * 100:.2f}%")
+print(k)
+
+
+
 
 #resten er lavet af chatten
 
-import numpy as np
+""" import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
@@ -81,3 +92,4 @@ plt.ylabel("Sepal width")
 plt.title(f"kNN Decision Boundary (k={k}) • Accuracy={accuracy*100:.2f}%")
 plt.legend()
 plt.show()
+ """
