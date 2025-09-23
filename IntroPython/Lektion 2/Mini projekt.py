@@ -16,7 +16,7 @@ viser_length_timer = 110
 viser_start_point = [320, 240]
 
 pygame.mixer.init()
-sounds = [pygame.mixer.Sound(f"sounds/{i:02d}.mp3") for i in range(1, 61)]
+sounds = [pygame.mixer.Sound(f"sounds/{i:02d}.mp3") for i in range(1, 60)]
 
 def draw_digital_clock(screen):
     font = pygame.font.SysFont("Consolas", 24, bold=True)
