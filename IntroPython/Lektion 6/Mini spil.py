@@ -111,6 +111,15 @@ while True:
     score_text = font.render(f"Score: {score}", True, (0,0,0))
     screen.blit(score_text, (10, 10))
 
+    if len(gold) == 0:
+        for i in range(10):
+            gold.append({
+                "id": i,
+                "x": random.randint(0, 620),
+                "y": random.randint(0, 460),
+                "points": random.randint(1, 100)
+            })
+
 
     clock.tick(120)
     pygame.display.flip() 
