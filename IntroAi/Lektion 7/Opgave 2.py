@@ -15,6 +15,10 @@ y = df["CVD"]
 model1 = LogisticRegression()
 model1.fit(X, y)
 
+
+
+
+
 # 3. Visualisér sigmoidkurven
 # Sigmoid viser sandsynligheden for CVD som funktion af blodtryk
 x_vals = np.linspace(df["BP"].min(), df["BP"].max(), 200).reshape(-1, 1)

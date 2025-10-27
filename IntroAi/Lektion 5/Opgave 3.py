@@ -11,14 +11,14 @@ from sklearn.model_selection import cross_val_score, GridSearchCV
 
 
 # Indlæs datasæt
-housing = pd.read_csv('C:\\Users\\Raind\\Documents\\MinRepo\\IntroAi\\Lektion 5\\housing.csv')
+housing = pd.read_csv('housing.csv')
 housing.head()
 
 num_features = housing.select_dtypes(include=[np.number]).columns
 housing_num = housing[num_features]
 
 
-scaler_std = StandardScaler(mean=0,std=1)
+scaler_std = StandardScaler()
 housing_standard = pd.DataFrame(scaler_std.fit_transform(housing_num),columns=num_features)
 print(housing_standard)
 
