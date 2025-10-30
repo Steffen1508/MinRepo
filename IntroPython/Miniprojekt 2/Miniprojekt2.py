@@ -21,7 +21,7 @@ grid_x_start, grid_y_start, grid_x_goal, grid_y_goal = 0,0,0,0
 
 def grid_generation():
     
-    noise = PerlinNoise(octaves=2, seed=1)
+    noise = PerlinNoise(octaves=2, seed=map_seed)
 
 
     

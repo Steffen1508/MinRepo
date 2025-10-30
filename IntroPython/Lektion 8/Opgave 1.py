@@ -42,10 +42,6 @@ class kNN:
         return best_lable
     
     
-    
-
-
-
 def main():
     screen = initialize_pygame()
 
@@ -76,12 +72,7 @@ def main():
         sample.color = (0,0,255)
     sample.draw(screen)
 
-
-   
     game_loop()
-
-
-
 
 def initialize_pygame():
     pygame.init()
