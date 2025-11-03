@@ -2,8 +2,8 @@ import pygame
 from perlin_noise import PerlinNoise
 import random
 from queue import PriorityQueue
-import time
 import math
+
 
 pygame.init()
 screen = pygame.display.set_mode((640, 480))
@@ -37,7 +37,7 @@ class grid():
                     cell["type"] = "water"
                     cell["cost"] = 5
                     cell["color"] = (40, 80, 200)
-                elif randomizer < 0.2:
+                elif randomizer < 0.1:
                     cell["type"] = "grass"
                     cell["cost"] = 1
                     cell["color"] = (20, 150, 20)
@@ -90,7 +90,7 @@ def heuristic(a, b):
     (x2, y2) = b
     return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
-def a_star_algorithm(grid, start, goal, screen):
+def a_star_algorithm(grid, start, goal):
     frontier = PriorityQueue()
     frontier.put((0, start))  
     came_from = {start: None}
@@ -127,6 +127,7 @@ while True:
     if len(points) == 0:
         start_cord = ()
         goal_cord = ()
+        
     if len(points) == 1:
         x, y = points[0]
         rect_start = x, y, rect_size[0], rect_size[1]
@@ -134,6 +135,7 @@ while True:
         grid_x_start = x_start // terrain_size 
         grid_y_start = y_start // terrain_size
         pygame.draw.rect(screen, (0,120,120), rect_start)
+        
     elif len(points) == 2:
         x, y = points[1]
         rect_stop = x, y, rect_size[0], rect_size[1]
@@ -160,21 +162,15 @@ while True:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             points.append(pygame.mouse.get_pos())
 
-        start_type = my_grid.terrain[grid_y_start][grid_x_start]["type"]
-        goal_type = my_grid.terrain[grid_y_goal][grid_x_goal]["type"]
+ #       start_type = my_grid.terrain[grid_y_start][grid_x_start]["type"]
+ #       goal_type = my_grid.terrain[grid_y_goal][grid_x_goal]["type"]
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                path = a_star_algorithm(my_grid, start_cord, goal_cord, screen)
+                path = a_star_algorithm(my_grid, start_cord, goal_cord)
                 my_grid.draw(screen)
                 my_grid.draw_path(screen, path)
 
                 pygame.draw.rect(screen, (0,120,120), (x_start, y_start, rect_size[0], rect_size[1]))
                 pygame.draw.rect(screen, (255,0,0), (x_goal, y_goal, rect_size[0], rect_size[1]))
                 pygame.display.flip()
-
-        if start_type == "water" or goal_type == "water":
-            print("Start eller slut er i vand – programmet lukker...")
-            time.sleep(5)
-            pygame.quit()
-            exit()
