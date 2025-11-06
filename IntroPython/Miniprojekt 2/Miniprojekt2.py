@@ -6,15 +6,15 @@ import math
 
 
 pygame.init()
-screen = pygame.display.set_mode((640, 480))
+screen = pygame.display.set_mode((1920 , 1080))
 clock = pygame.time.Clock()
 
 screen.fill((255, 255, 255))
-terrain_size = 10
-grid_width = 640 // terrain_size
-grid_height = 480 // terrain_size
+terrain_size = 12
+grid_width = 1920 // terrain_size
+grid_height = 1080 // terrain_size
 map_seed = random.randint(0,100)
-rect_size = (10,10)
+rect_size = (12,12)
 points=[]
 grid_x_start, grid_y_start, grid_x_goal, grid_y_goal = 0,0,0,0
 
@@ -41,10 +41,14 @@ class grid():
                     cell["type"] = "grass"
                     cell["cost"] = 1
                     cell["color"] = (20, 150, 20)
-                else:
+                elif randomizer < 0.5:
                     cell["type"] = "mountain"
                     cell["cost"] = 3
                     cell["color"] = (100, 100, 100)
+                else:
+                    cell["type"] = "lava"
+                    cell["cost"] = float("inf")
+                    cell["color"] = (255, 160, 0)
                 row.append(cell)
             self.terrain.append(row)
 
@@ -85,6 +89,8 @@ class grid():
             )
             pygame.draw.line(screen, (160, 0, 255), start_pos, end_pos, 4)
 
+    
+
 def heuristic(a, b):
     (x1, y1) = a
     (x2, y2) = b
@@ -116,7 +122,10 @@ def a_star_algorithm(grid, start, goal):
         current = came_from[current]
     path.append(start)
     path.reverse()
-    return path
+    return path, cost_so_far[goal]
+
+
+
 
 
 my_grid = grid(grid_width,grid_height,terrain_size)
@@ -167,9 +176,14 @@ while True:
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                path = a_star_algorithm(my_grid, start_cord, goal_cord)
+                path,cost_to_goal = a_star_algorithm(my_grid, start_cord, goal_cord)
                 my_grid.draw(screen)
                 my_grid.draw_path(screen, path)
+                font = pygame.font.SysFont("Consolas",32,bold=True)
+                text = font.render(f"Cost to goal: {cost_to_goal}",True,(255,255,255))
+                rect = text.get_rect(center=(200,50))
+                screen.blit(text,rect)
+                
 
                 pygame.draw.rect(screen, (0,120,120), (x_start, y_start, rect_size[0], rect_size[1]))
                 pygame.draw.rect(screen, (255,0,0), (x_goal, y_goal, rect_size[0], rect_size[1]))
