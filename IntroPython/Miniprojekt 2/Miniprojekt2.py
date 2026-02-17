@@ -5,26 +5,15 @@ from queue import PriorityQueue
 import math
 
 
-pygame.init()
-screen = pygame.display.set_mode((1920 , 1080))
-clock = pygame.time.Clock()
-
-screen.fill((255, 255, 255))
-terrain_size = 12
-grid_width = 1920 // terrain_size
-grid_height = 1080 // terrain_size
-map_seed = random.randint(0,100)
-rect_size = (12,12)
-points=[]
-grid_x_start, grid_y_start, grid_x_goal, grid_y_goal = 0,0,0,0
-
+#Grid classen laver mappet, tegner det,finder et givet punkts naboer og tegner stregen mellem start og slut
+#Constructor
 class grid():
     def __init__(self,width,height,cell_size):
         self.width = width
         self.height = height
         self.cell_size = cell_size
         self.terrain = []
-
+#Grid generation med type, cost og color
     def generate(self,seed):
         self.terrain = []
         noise = PerlinNoise(octaves=2, seed=seed)
@@ -51,7 +40,7 @@ class grid():
                     cell["color"] = (255, 160, 0)
                 row.append(cell)
             self.terrain.append(row)
-
+#Mappet tegnes
     def draw(self,screen):
         for y in range(self.height):
             for x in range(self.width):
@@ -59,20 +48,23 @@ class grid():
                 rect = ((x * self.cell_size),(y * self.cell_size),self.cell_size,self.cell_size)
                 pygame.draw.rect(screen,color,rect)
 
+#Finder og returnerer alle gyldige naboceller omkring en given position (inklusive diagonaler).
     def get_neighbors(self,pos):
         x,y = pos
         neighbors = []
         directions = [(1, 0), (-1, 0), (0, 1), (0, -1), (1,1), (1,-1), (-1,1), (-1,-1)]
         for dx, dy in directions:
             nx, ny = x + dx, y + dy
-            if 0 <= nx < self.width and 0 <= ny < self.height:
+            if 0 <= nx < self.width and 0 <= ny < self.height: #Tjek så den ikke går ud over kanten
                 neighbors.append((nx, ny))
         return neighbors
 
+#Finder cost på de celler som A* kigger på
     def get_cost(self,pos):
         x,y = pos
         return self.terrain[y][x]["cost"]
     
+#Når A* har fundet en route, tegner vi en streg fra start til slut    
     def draw_path(self, screen, path):
         if len(path) < 2:
             return
@@ -89,13 +81,13 @@ class grid():
             )
             pygame.draw.line(screen, (160, 0, 255), start_pos, end_pos, 4)
 
-    
-
+#Funktion der finder hvor lang vi er fra målet
 def heuristic(a, b):
     (x1, y1) = a
     (x2, y2) = b
     return math.sqrt((x1 - x2)**2 + (y1 - y2)**2)
 
+#Her implementeres A* 
 def a_star_algorithm(grid, start, goal):
     frontier = PriorityQueue()
     frontier.put((0, start))  
@@ -125,66 +117,86 @@ def a_star_algorithm(grid, start, goal):
     return path, cost_so_far[goal]
 
 
+#Main funktion for at køre koden
+def main():
 
+    pygame.init()
+    screen = pygame.display.set_mode((1920 , 1080))
+    clock = pygame.time.Clock()
+#Variabler
+    screen.fill((255, 255, 255))
+    terrain_size = 12
+    grid_width = 1920 // terrain_size
+    grid_height = 1080 // terrain_size
+    rect_size = (12,12)
+    points=[]
+    grid_x_start, grid_y_start, grid_x_goal, grid_y_goal = 0,0,0,0
+    map_seed = random.randint(0,100)
+#Her kalder vi grid klassen
+    my_grid = grid(grid_width,grid_height,terrain_size)
+    my_grid.generate(map_seed)
+    my_grid.draw(screen)
 
+    while True:
 
-my_grid = grid(grid_width,grid_height,terrain_size)
-my_grid.generate(map_seed)
-my_grid.draw(screen)
-
-while True:
-    if len(points) == 0:
-        start_cord = ()
-        goal_cord = ()
+#Et tjek som bliver brugt til at tegne/definerer start/slut punkt        
+        if len(points) == 0:
+            start_cord = ()
+            goal_cord = ()
+            
+        if len(points) == 1:
+            x, y = points[0]
+            rect_start = x, y, rect_size[0], rect_size[1]
+            x_start, y_start = points[0]
+            grid_x_start = x_start // terrain_size 
+            grid_y_start = y_start // terrain_size
+            pygame.draw.rect(screen, (0,120,120), rect_start)
+            
+        elif len(points) == 2:
+            x, y = points[1]
+            rect_stop = x, y, rect_size[0], rect_size[1]
+            x_goal, y_goal = points[1]
+            grid_x_goal = x_goal // terrain_size
+            grid_y_goal = y_goal // terrain_size
+            pygame.draw.rect(screen, (255,0,0), rect_stop)
         
-    if len(points) == 1:
-        x, y = points[0]
-        rect_start = x, y, rect_size[0], rect_size[1]
-        x_start, y_start = points[0]
-        grid_x_start = x_start // terrain_size 
-        grid_y_start = y_start // terrain_size
-        pygame.draw.rect(screen, (0,120,120), rect_start)
-        
-    elif len(points) == 2:
-        x, y = points[1]
-        rect_stop = x, y, rect_size[0], rect_size[1]
-        x_goal, y_goal = points[1]
-        grid_x_goal = x_goal // terrain_size
-        grid_y_goal = y_goal // terrain_size
-        pygame.draw.rect(screen, (255,0,0), rect_stop)
-    
-    start_cord = grid_x_start, grid_y_start
-    goal_cord = grid_x_goal, grid_y_goal
+        start_cord = grid_x_start, grid_y_start
+        goal_cord = grid_x_goal, grid_y_goal
 
-    clock.tick(120)
-    pygame.display.flip() 
-    for event in pygame.event.get():            
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit() 
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_d:
-                map_seed = random.randint(0,100)
-                points=[]
-                my_grid.generate(map_seed)
-                my_grid.draw(screen)
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            points.append(pygame.mouse.get_pos())
+        clock.tick(120)
+        pygame.display.flip() 
 
- #       start_type = my_grid.terrain[grid_y_start][grid_x_start]["type"]
- #       goal_type = my_grid.terrain[grid_y_goal][grid_x_goal]["type"]
+#Event for-løkke for at tjek om knapper bliver trykker        
+        for event in pygame.event.get():            
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit() 
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_d: #d bruges til at generere et nyt map
+                    map_seed = random.randint(0,100)
+                    points=[]
+                    my_grid.generate(map_seed)
+                    my_grid.draw(screen)
+            elif event.type == pygame.MOUSEBUTTONDOWN: #Venstre klik bruges til at vælge start og slut punkt
+                points.append(pygame.mouse.get_pos())
 
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                path,cost_to_goal = a_star_algorithm(my_grid, start_cord, goal_cord)
-                my_grid.draw(screen)
-                my_grid.draw_path(screen, path)
-                font = pygame.font.SysFont("Consolas",32,bold=True)
-                text = font.render(f"Cost to goal: {cost_to_goal}",True,(255,255,255))
-                rect = text.get_rect(center=(200,50))
-                screen.blit(text,rect)
-                
+#Hvis mellemrum trykkes på bliver A* funktionen kaldt brugt til at finde vej
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    path,cost_to_goal = a_star_algorithm(my_grid, start_cord, goal_cord)
+                    my_grid.draw(screen)
+                    my_grid.draw_path(screen, path)
 
-                pygame.draw.rect(screen, (0,120,120), (x_start, y_start, rect_size[0], rect_size[1]))
-                pygame.draw.rect(screen, (255,0,0), (x_goal, y_goal, rect_size[0], rect_size[1]))
-                pygame.display.flip()
+#Total cost fra start til slut printes som font på skærmen
+                    font = pygame.font.SysFont("Consolas",32,bold=True)
+                    text = font.render(f"Cost to goal: {cost_to_goal}",True,(255,255,255))
+                    rect = text.get_rect(center=(200,50))
+                    screen.blit(text,rect)
+                    
+#Start og slut bliver tegnet
+                    pygame.draw.rect(screen, (0,120,120), (x_start, y_start, rect_size[0], rect_size[1]))
+                    pygame.draw.rect(screen, (255,0,0), (x_goal, y_goal, rect_size[0], rect_size[1]))
+                    pygame.display.flip()
+
+if __name__ == "__main__":
+    main()
