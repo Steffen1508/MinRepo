@@ -90,11 +90,11 @@ y = horse_enc["outcome"].values
 print(f"\nFeatures til klassifikation ({len(feature_cols)}): {feature_cols}")
 
 methods = {
-    "Drop NaN-raekker": "drop",
-    "Mean imputering": SimpleImputer(strategy="mean"),
-    "Median imputering": SimpleImputer(strategy="median"),
-    "KNN imputering (k=5)": KNNImputer(n_neighbors=5),
-    "Iterativ (MICE)": IterativeImputer(max_iter=10, random_state=42),
+    "Drop NaN rows": "drop",
+    "Mean imputation": SimpleImputer(strategy="mean"),       # var: "Mean imputering"
+    "Median imputation": SimpleImputer(strategy="median"),   # var: "Median imputering"
+    "KNN imputation (k=5)": KNNImputer(n_neighbors=5),       # var: "KNN imputering (k=5)"
+    "Iterative (MICE)": IterativeImputer(max_iter=10, random_state=42),  # var: "Iterativ (MICE)"
 }
 results = {}
 cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=0)
