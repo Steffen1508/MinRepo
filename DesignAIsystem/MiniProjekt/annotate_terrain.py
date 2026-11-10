@@ -12,9 +12,9 @@ import numpy as np
 from flask import Flask, jsonify, request, send_from_directory
 
 # ── config ─────────────────────────────────────────────────────────────────────
-image_folder  = r"C:\Users\110492\Github\MinRepo\DesignAIsystem\MiniProjekt\dataset"
-tiles_folder  = r"C:\Users\110492\Github\MinRepo\DesignAIsystem\MiniProjekt\tiles"
-output_file   = r"C:\Users\110492\Github\MinRepo\DesignAIsystem\MiniProjekt\ground_truth_terrain.json"
+image_folder  = r"C:\Users\Raind\OneDrive\Documents\GitHub\MinRepo\DesignAIsystem\MiniProjekt\dataset"
+tiles_folder  = r"C:\Users\Raind\OneDrive\Documents\GitHub\MinRepo\DesignAIsystem\MiniProjekt\tiles"
+output_file   = r"C:\Users\Raind\OneDrive\Documents\GitHub\MinRepo\DesignAIsystem\MiniProjekt\ground_truth_terrain.json"
 
 tile_size  = 100
 grid_size  = 5

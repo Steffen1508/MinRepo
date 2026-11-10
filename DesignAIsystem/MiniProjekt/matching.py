@@ -1,11 +1,6 @@
 import cv2 as cv
 import numpy as np
 
-# 1. Load template
-template = cv.imread(r'C:\Users\110492\Github\MinRepo\DesignAIsystem\MiniProjekt\krone_transparent.png', cv.IMREAD_UNCHANGED)
-print(template.shape)
-image = cv.imread(r'C:\Users\110492\Github\MinRepo\DesignAIsystem\MiniProjekt\dataset\9.jpg')
-
 # 2. Rotate funktion
 def rotate_template(template, angle):
     h, w = template.shape[:2]
@@ -16,31 +11,29 @@ def rotate_template(template, angle):
 
 # 3. Count crowns
 def count_crowns(tile, template, threshold=0.6):
-    crown_count = 0
-    
     template_bgr  = template[:, :, :3]
     template_mask = template[:, :, 3]
-    
+
+    all_points = []
+
     for angle in [0, 90, 180, 270]:
         rotated_bgr  = rotate_template(template_bgr, angle)
         rotated_mask = rotate_template(template_mask, angle)
-        
-        result = cv.matchTemplate(tile, rotated_bgr,
-                                  cv.TM_CCOEFF_NORMED,
-                                  mask=rotated_mask)
-        
-        locations = np.where(result >= threshold)
-        unique = filter_matches(locations, min_distance=20)
-        
-        print(f"Vinkel {angle}°: {len(unique)} unikke matches")
-        crown_count += len(unique)
-    
-    return crown_count
 
-def filter_matches(locations, min_distance=15):
+        result    = cv.matchTemplate(tile, rotated_bgr,
+                                     cv.TM_CCOEFF_NORMED,
+                                     mask=rotated_mask)
+        locations = np.where(result >= threshold)
+        points    = list(zip(locations[1], locations[0]))  # (x, y)
+        all_points.extend(points)
+
+    # Deduplicer på tværs af alle rotationer
+    unique = filter_matches(all_points, min_distance=20)
+    return len(unique)
+
+def filter_matches(points, min_distance=15):
     """Behold kun matches der er mindst min_distance fra hinanden"""
-    points = list(zip(locations[1], locations[0]))  # (x, y)
-    points.sort(key=lambda p: p[0])  # sorter efter x
+    points = sorted(points, key=lambda p: p[0])
     
     kept = []
     for point in points:
@@ -56,10 +49,32 @@ def filter_matches(locations, min_distance=15):
     
     return kept
 
-# 4. Test på ét felt
-for y in range(5):
-    for x in range(5):
-        tile = image[y*100:(y+1)*100, x*100:(x+1)*100]
-        crowns = count_crowns(tile, template)
-        if crowns > 0:
-            print(f"Felt ({x},{y}): {crowns} kroner")
+def max_match_score(tile, template) -> float:
+    """Returner højeste template match score på tværs af alle rotationer (ingen threshold)."""
+    template_bgr  = template[:, :, :3]
+    template_mask = template[:, :, 3]
+    best = 0.0
+    for angle in [0, 90, 180, 270]:
+        rotated_bgr  = rotate_template(template_bgr, angle)
+        rotated_mask = rotate_template(template_mask, angle)
+        result = cv.matchTemplate(tile, rotated_bgr, cv.TM_CCOEFF_NORMED,
+                                  mask=rotated_mask)
+        best = max(best, float(result.max()))
+    return best
+
+
+if __name__ == "__main__":
+    TEMPLATE_PATH = r'C:\Users\Raind\OneDrive\Documents\GitHub\MinRepo\DesignAIsystem\MiniProjekt\krone_transparent.png'
+    IMAGE_PATH    = r'C:\Users\Raind\OneDrive\Documents\GitHub\MinRepo\DesignAIsystem\MiniProjekt\dataset\9.jpg'
+
+    template = cv.imread(TEMPLATE_PATH, cv.IMREAD_UNCHANGED)
+    image    = cv.imread(IMAGE_PATH)
+
+    print(template.shape)
+
+    for y in range(5):
+        for x in range(5):
+            tile   = image[y*100:(y+1)*100, x*100:(x+1)*100]
+            crowns = count_crowns(tile, template)
+            if crowns > 0:
+                print(f"Felt ({x},{y}): {crowns} kroner")
