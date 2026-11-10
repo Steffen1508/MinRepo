@@ -15,6 +15,9 @@ def main():
     grid_line(grid,(0,0),(0,47))      # left
     grid_line(grid,(63,0),(63,47))    # right
 
+    # --- Labyrint ---
+    make_maze(grid)
+    print(grid)
 
 
     # --- Main loop ---
@@ -62,5 +65,41 @@ def draw_grid(screen,grid):
                 pygame.draw.rect(screen,(0,0,0),(x*10,y*10,10,10))
 
 
+def make_maze(grid):
+    # Lodrette vægge i hver anden kolonne, hver med et tilfældigt hul,
+    # så der altid er en vej igennem labyrinten.
+    height = len(grid)
+    width = len(grid[0])
+    for x in range(2, width - 2, 2):
+        gap = random.randint(1, height - 2)       # hullet i væggen
+        if gap > 1:
+            grid_line(grid, (x, 1), (x, gap - 1))           # væg over hullet
+        if gap < height - 2:
+            grid_line(grid, (x, gap + 1), (x, height - 2))  # væg under hullet
+    return grid
+
+
 if __name__ == "__main__":
     main()
+
+# ----------------------------------------------------------------------
+# Grov forklaring af hvordan programmet virker:
+#
+# 1. main() starter pygame og laver et vindue på 640x480.
+# 2. empty_cell((64,48)) laver et 2D-grid (liste af lister) med 48 rækker
+#    og 64 kolonner, fyldt med 0'er. 0 = tom plads, 1 = væg.
+# 3. grid_line(grid, start, slut) sætter 1'ere fra start til slut.
+#    Den kan kun tegne vandrette eller lodrette linjer - hvis både x og y
+#    er forskellige (skrå linje), giver den en fejl og lukker programmet.
+# 4. Først tegnes de fire kanter rundt om hele griddet med grid_line.
+# 5. make_maze(grid) laver selve labyrinten:
+#    - Den går gennem hver anden kolonne (x = 2, 4, 6, ...).
+#    - I hver kolonne vælges et tilfældigt hul (en y-værdi).
+#    - Der tegnes en lodret væg over hullet og en under hullet,
+#      så der kun er én åbning i hver væg.
+#    - Fordi hver væg har et hul, kan man altid komme fra venstre til højre.
+# 6. print(grid) printer hele griddet i terminalen.
+# 7. I while-løkken tegner draw_grid() hver celle med værdien 1 som en
+#    10x10 sort firkant (64*10 = 640 og 48*10 = 480, så det fylder skærmen).
+#    Løkken kører 60 gange i sekundet, indtil man lukker vinduet.
+# ----------------------------------------------------------------------
