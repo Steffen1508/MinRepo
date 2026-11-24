@@ -1,0 +1,19 @@
+# Data og genererede filer (store, hentes/laves lokalt)
+Dataset_Kaggle/
+SkateboardML-1.0/
+data/
+cache/
+runs/
+logs/
+*.pt
+*.mp4
+*.mov
+*.npy
+
+# Python
+__pycache__/
+.venv/
+*.pyc
+
+# Nøgler
+kaggle.json

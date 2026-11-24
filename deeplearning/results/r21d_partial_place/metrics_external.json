@@ -1,0 +1,79 @@
+{
+  "accuracy": 0.20454545454545456,
+  "macro_f1": 0.1956521739130435,
+  "per_class": {
+    "Ollie": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 15
+    },
+    "Shuvit": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "FrontShuvit": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    },
+    "Kickflip": {
+      "precision": 0.5294117647058824,
+      "recall": 0.3103448275862069,
+      "f1": 0.391304347826087,
+      "support": 29
+    },
+    "Heelflip": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 0
+    }
+  },
+  "confusion": [
+    [
+      0,
+      2,
+      0,
+      8,
+      5
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      13,
+      0,
+      9,
+      7
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "present_classes": [
+    "Ollie",
+    "Kickflip"
+  ],
+  "accuracy_present": 0.6363636363636364,
+  "macro_f1_present": 0.38888888888888895
+}
