@@ -78,4 +78,4 @@ Detaljer for hver kørsel ligger i `results/<kørsel>/`.
 
 ## Brug af AI
 
-Koden er udviklet med hjælp fra Claude (Anthropic), som har skrevet størstedelen af implementeringen. Valg af problem, tricks og datasæt, kørsel af alle eksperimenter på AI-LAB og fortolkning af resultaterne er lavet af mig.
+Koden er udviklet med hjælp fra Claude til insættelse af kommentare, rengøring af kode og slurm jobs til AI lab, co-pilot line suggestion er brugt til støresledelen af koden. Valg af problem, tricks og datasæt, kørsel af alle eksperimenter på AI-LAB og fortolkning af resultaterne er lavet af mig.
